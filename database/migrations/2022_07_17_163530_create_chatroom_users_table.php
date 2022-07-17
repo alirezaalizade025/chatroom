@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration 
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -15,13 +15,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('chatroom_users', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Chatroom::class)->constrained();
             $table->foreignIdFor(User::class)->constrained();
-            $table->enum('type', ['text', 'image', 'video', 'audio'])->default('text');
-            $table->mediumText('message');
-            $table->enum('status', ['sent', 'delivered', 'read'])->default('sent');
+            $table->boolean('is_blocked')->default(false);
+            $table->boolean('is_admin')->default(false);
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('chatroom_users');
     }
 };

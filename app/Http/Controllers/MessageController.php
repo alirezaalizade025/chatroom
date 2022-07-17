@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Message;
+use App\Models\Chatroom;
+use Illuminate\Support\Facades\Request;
 use App\Http\Requests\StoreMessageRequest;
 use App\Http\Requests\UpdateMessageRequest;
-use App\Models\Message;
 
 class MessageController extends Controller
 {
@@ -13,9 +15,11 @@ class MessageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($chatroom_id)
     {
-        //
+        $chatroom = Chatroom::orderBy('created_at', 'DESC')->find($chatroom_id);
+        $this->authorize('viewAny', [Message::class, $chatroom]);
+        return response($chatroom->messages()->with('user')->get());
     }
 
     /**
@@ -25,7 +29,7 @@ class MessageController extends Controller
      */
     public function create()
     {
-        //
+
     }
 
     /**
@@ -36,7 +40,11 @@ class MessageController extends Controller
      */
     public function store(StoreMessageRequest $request)
     {
-        //
+        $chatroom = Chatroom::find($request->chatroom_id);
+        $this->authorize('create', [Message::class, $chatroom]);
+        $request->merge(['user_id' => auth()->id()]);
+        $chatroom->messages()->create($request->all());
+        return response($chatroom->messages);
     }
 
     /**
@@ -47,7 +55,7 @@ class MessageController extends Controller
      */
     public function show(Message $message)
     {
-        //
+    //
     }
 
     /**
@@ -58,7 +66,7 @@ class MessageController extends Controller
      */
     public function edit(Message $message)
     {
-        //
+    //
     }
 
     /**
@@ -70,7 +78,7 @@ class MessageController extends Controller
      */
     public function update(UpdateMessageRequest $request, Message $message)
     {
-        //
+    //
     }
 
     /**
@@ -81,6 +89,6 @@ class MessageController extends Controller
      */
     public function destroy(Message $message)
     {
-        //
+    //
     }
 }

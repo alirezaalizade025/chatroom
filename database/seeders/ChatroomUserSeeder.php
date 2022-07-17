@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Database\Factories\ChatroomFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
-class ChatroomSeeder extends Seeder
+class ChatroomUserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,6 +14,6 @@ class ChatroomSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(ChatroomFactory::class);
+        //
     }
 }

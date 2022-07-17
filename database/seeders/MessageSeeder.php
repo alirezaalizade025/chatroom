@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Factories\MessageFactory;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class MessageSeeder extends Seeder
 {
@@ -14,6 +15,6 @@ class MessageSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $this->call(MessageFactory::class);
     }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreChatroomRequest;
-use App\Http\Requests\UpdateChatroomRequest;
-use App\Models\Chatroom;
+use App\Http\Requests\StoreChatroomUserRequest;
+use App\Http\Requests\UpdateChatroomUserRequest;
+use App\Models\ChatroomUser;
 
-class ChatroomController extends Controller
+class ChatroomUserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,9 +15,7 @@ class ChatroomController extends Controller
      */
     public function index()
     {
-        return response(
-            Chatroom::get()
-        );
+        //
     }
 
     /**
@@ -27,62 +25,62 @@ class ChatroomController extends Controller
      */
     public function create()
     {
-    //
+        //
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreChatroomRequest  $request
+     * @param  \App\Http\Requests\StoreChatroomUserRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreChatroomRequest $request)
+    public function store(StoreChatroomUserRequest $request)
     {
-    //
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Chatroom  $chatroom
+     * @param  \App\Models\ChatroomUser  $chatroomUser
      * @return \Illuminate\Http\Response
      */
-    public function show(Chatroom $chatroom)
+    public function show(ChatroomUser $chatroomUser)
     {
-    //
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Chatroom  $chatroom
+     * @param  \App\Models\ChatroomUser  $chatroomUser
      * @return \Illuminate\Http\Response
      */
-    public function edit(Chatroom $chatroom)
+    public function edit(ChatroomUser $chatroomUser)
     {
-    //
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateChatroomRequest  $request
-     * @param  \App\Models\Chatroom  $chatroom
+     * @param  \App\Http\Requests\UpdateChatroomUserRequest  $request
+     * @param  \App\Models\ChatroomUser  $chatroomUser
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateChatroomRequest $request, Chatroom $chatroom)
+    public function update(UpdateChatroomUserRequest $request, ChatroomUser $chatroomUser)
     {
-    //
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Chatroom  $chatroom
+     * @param  \App\Models\ChatroomUser  $chatroomUser
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Chatroom $chatroom)
+    public function destroy(ChatroomUser $chatroomUser)
     {
-    //
+        //
     }
 }
