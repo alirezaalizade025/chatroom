@@ -44,14 +44,15 @@
             <div class="relative flex-grow">
                 <label>
                     <input
+                        v-model="message"
+                        @keyup.enter="sendMessage()"
                         class="rounded-full py-2 pl-3 pr-10 w-full border border-gray-800 focus:border-gray-700 bg-gray-800 focus:bg-gray-900 focus:outline-none text-gray-200 focus:shadow-md transition duration-300 ease-in"
                         type="text"
-                        value=""
                         placeholder="Aa"
                     />
                     <button
                         type="button"
-                        class="absolute top-0 right-0 mt-2 mr-3 flex flex-shrink-0 focus:outline-none block text-blue-600 hover:text-blue-700 w-6 h-6"
+                        class="absolute top-0 right-8 mt-2 mr-3 flex flex-shrink-0 focus:outline-none block text-blue-600 hover:text-blue-700 w-6 h-6"
                     >
                         <svg
                             viewBox="0 0 20 20"
@@ -61,6 +62,13 @@
                                 d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM6.5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm7 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm2.16 3a6 6 0 0 1-11.32 0h11.32z"
                             />
                         </svg>
+                    </button>
+                    <button
+                        @click="sendMessage()"
+                        type="button"
+                        class="absolute top-0 right-1 mt-2 mr-3 flex flex-shrink-0 focus:outline-none block text-blue-600 hover:text-blue-700 w-6 h-6"
+                    >
+                        send
                     </button>
                 </label>
             </div>
@@ -84,6 +92,32 @@ export default {
             type: Object,
             required: true,
         },
-    }
+    },
+    data: function () {
+        return {
+            message: "",
+        };
+    },
+    methods: {
+        sendMessage() {
+            if (this.message == "") {
+                return;
+            }
+
+            axios
+                .post(`/chatrooms/${this.currentRoom.id}/messages`, {
+                    message: this.message,
+                })
+                .then((response) => {
+                    if ((response.status = 201)) {
+                        this.message = "";
+                        this.$emit("messageSent", response.data);
+                    }
+                })
+                .catch((response) => {
+                    console.log(response);
+                });
+        },
+    },
 };
 </script>

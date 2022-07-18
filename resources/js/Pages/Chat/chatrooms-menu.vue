@@ -55,8 +55,8 @@
         </div>
         
         <div class="contacts p-2 flex-1 overflow-y-scroll">
-            <div v-for="(chatroom, index) in chatrooms" :key="index"
-                class="flex justify-between items-center p-3 hover:bg-gray-800 rounded-lg relative"
+            <div v-for="(chatroom, index) in chatrooms" :key="index" @click="setRoom(chatroom)"
+                class="flex justify-between items-center p-3 hover:bg-gray-800 rounded-lg relative cursor-pointer"
             >
                 <div class="w-16 h-16 relative flex flex-shrink-0">
                     <img

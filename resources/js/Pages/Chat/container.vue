@@ -76,9 +76,9 @@
                         </div>
                     </div>
 
-                    <messageContainer :currentRoom="currentRoom" />
+                    <messageContainer :currentRoom="currentRoom" :newMessage="newMessage"/>
 
-                    <InputMessage :currentRoom="currentRoom" />
+                    <InputMessage :currentRoom="currentRoom" @messageSent="messageSent"/>
                 </section>
             </main>
         </div>
@@ -94,6 +94,7 @@ export default {
     data: function () {
         return {
             currentRoom: [],
+            newMessage: [],
         };
     },
     components: {
@@ -105,6 +106,9 @@ export default {
     methods: {
         setRoom(room) {
             this.currentRoom = room;
+        },
+        messageSent(message) {
+            this.newMessage = message;
         },
     },
 };

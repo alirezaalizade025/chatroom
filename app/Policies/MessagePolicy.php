@@ -46,7 +46,7 @@ class MessagePolicy
      */
     public function create(User $user, $chatroom)
     {
-        if ($user->chatroom()->find($chatroom->id)) {
+        if ($user->chatrooms()->find($chatroom->id)) {
             return Response::allow();
         }
         return Response::deny('You are not allowed to create messages in this chatroom.');

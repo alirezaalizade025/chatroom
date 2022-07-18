@@ -13,6 +13,9 @@ class StoreMessageRequest extends FormRequest
      */
     public function authorize()
     {
+        if (auth()->check()) {
+            return true;
+        }
         return false;
     }
 
@@ -24,7 +27,7 @@ class StoreMessageRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'message' => 'required|string'
         ];
     }
 }

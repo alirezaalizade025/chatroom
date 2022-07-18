@@ -13,6 +13,7 @@ class MessageController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param int $chatroom_id
      * @return \Illuminate\Http\Response
      */
     public function index($chatroom_id)
@@ -38,13 +39,14 @@ class MessageController extends Controller
      * @param  \App\Http\Requests\StoreMessageRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreMessageRequest $request)
+    public function store(StoreMessageRequest $request, $chatroom_id)
     {
+
         $chatroom = Chatroom::find($request->chatroom_id);
         $this->authorize('create', [Message::class, $chatroom]);
         $request->merge(['user_id' => auth()->id()]);
         $chatroom->messages()->create($request->all());
-        return response($chatroom->messages);
+        return response($chatroom->messages()->with('user')->latest()->first());
     }
 
     /**

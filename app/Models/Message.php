@@ -13,6 +13,15 @@ class Message extends Model
     protected $appends = [
         'is_mine'
     ];
+    protected $fillable = [
+        'message',
+        'type',
+        'chatroom_id',
+        'user_id',
+        'status',
+        'created_at',
+        'updated_at'
+    ];
 
     public function chatroom()
     {
