@@ -1,6 +1,6 @@
 <template>
     <div ref="msgContainer" class="h-full p-5 overflow-auto">
-        <MessageItem :messages="messages" />
+        <MessageItem :messages="messages" :chatroom="currentRoom"/>
     </div>
 </template>
 <script>
@@ -35,6 +35,13 @@ export default {
 
                 window.Echo.private("chatroom." + this.currentRoom.id).listen(
                     "NewMessage",
+                    (e) => {
+                        vm.getRoomMessages(this.currentRoom.id);
+                    }
+                );
+
+                window.Echo.private("chatroom." + this.currentRoom.id).listen(
+                    "DeleteMessage",
                     (e) => {
                         vm.getRoomMessages(this.currentRoom.id);
                     }

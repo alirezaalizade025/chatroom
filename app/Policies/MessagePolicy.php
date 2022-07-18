@@ -73,7 +73,10 @@ class MessagePolicy
      */
     public function delete(User $user, Message $message)
     {
-    //
+        if ($user->id == $message->user_id) {
+            return Response::allow();
+        }
+        return Response::deny('You are not allowed to delete this message.');
     }
 
     /**

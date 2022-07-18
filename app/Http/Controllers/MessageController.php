@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use App\Models\Chatroom;
 use App\Events\NewMessage;
+use App\Events\DeleteMessage;
 use Illuminate\Support\Facades\Request;
 use App\Http\Requests\StoreMessageRequest;
 use App\Http\Requests\UpdateMessageRequest;
@@ -48,9 +49,9 @@ class MessageController extends Controller
         $request->merge(['user_id' => auth()->id()]);
         $newMessage = $chatroom->messages()->create($request->all());
 
-        broadcast(new NewMessage($chatroom->messages()->with('user')->latest()->first()))->toOthers();
+        broadcast(new NewMessage($newMessage))->toOthers();
 
-        return response($chatroom->messages()->with('user')->latest()->first());
+        return response($newMessage);
     }
 
     /**
@@ -93,8 +94,14 @@ class MessageController extends Controller
      * @param  \App\Models\Message  $message
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Message $message)
+    public function destroy($chatroomId, $id)
     {
-    //
+        $message = Message::find($id);
+        $this->authorize('delete', $message);
+        broadcast(new DeleteMessage($message))->toOthers();
+
+        $message->delete();
+
+        return response('Message deleted.');
     }
 }
