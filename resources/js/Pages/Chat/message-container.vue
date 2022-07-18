@@ -16,7 +16,7 @@ export default {
             type: Object,
         },
     },
-    
+
     components: {
         MessageItem,
     },
@@ -28,6 +28,19 @@ export default {
     },
 
     methods: {
+        connect() {
+            if (this.currentRoom.id) {
+                let vm = this;
+                this.getRoomMessages(this.currentRoom.id);
+
+                window.Echo.private("chatroom." + this.currentRoom.id).listen(
+                    "NewMessage",
+                    (e) => {
+                        vm.getRoomMessages(this.currentRoom.id);
+                    }
+                );
+            }
+        },
         getRoomMessages(id) {
             axios
                 .get(`/chatrooms/${id}/messages`)
@@ -50,7 +63,7 @@ export default {
 
     watch: {
         currentRoom: function (newRoom, oldRoom) {
-            this.getRoomMessages(newRoom.id);
+            this.connect();
         },
         newMessage: function (newMessage, oldMessage) {
             this.appendMessage(newMessage);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use App\Models\Chatroom;
+use App\Events\NewMessage;
 use Illuminate\Support\Facades\Request;
 use App\Http\Requests\StoreMessageRequest;
 use App\Http\Requests\UpdateMessageRequest;
@@ -45,7 +46,10 @@ class MessageController extends Controller
         $chatroom = Chatroom::find($request->chatroom_id);
         $this->authorize('create', [Message::class, $chatroom]);
         $request->merge(['user_id' => auth()->id()]);
-        $chatroom->messages()->create($request->all());
+        $newMessage = $chatroom->messages()->create($request->all());
+
+        broadcast(new NewMessage($chatroom->messages()->with('user')->latest()->first()))->toOthers();
+
         return response($chatroom->messages()->with('user')->latest()->first());
     }
 
