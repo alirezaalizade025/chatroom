@@ -11,6 +11,7 @@ class Chatroom extends Model
 {
     use HasFactory;
     protected $appends = ['last_message', 'created_at_formatted'];
+    protected $guarded = [];
 
     public function messages()
     {
@@ -19,7 +20,7 @@ class Chatroom extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->hasManyThrough(User::class, ChatroomUser::class, 'chatroom_id', 'id', 'id', 'user_id');
     }
 
     protected function getLastMessageAttribute()

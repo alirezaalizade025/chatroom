@@ -18,9 +18,17 @@ class ChatroomUserFactory extends Factory
      */
     public function definition()
     {
-        return [
-            'chatroom_id' => Chatroom::all()->random()->id,
+        $chatroomUser = [
             'user_id' => User::all()->random()->id,
         ];
+        while(true) {
+            $chatroom = Chatroom::all()->random();
+            if ($chatroom->users->contains($chatroomUser['user_id'])) {
+                continue;
+            }
+            $chatroomUser['chatroom_id'] = $chatroom->id;
+            break;
+        }
+        return $chatroomUser;
     }
 }

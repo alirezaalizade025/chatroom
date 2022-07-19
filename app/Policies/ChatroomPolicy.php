@@ -2,8 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\Chatroom;
 use App\Models\User;
+use App\Models\Chatroom;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ChatroomPolicy
@@ -18,7 +19,7 @@ class ChatroomPolicy
      */
     public function viewAny(User $user)
     {
-        //
+    //
     }
 
     /**
@@ -30,7 +31,7 @@ class ChatroomPolicy
      */
     public function view(User $user, Chatroom $chatroom)
     {
-        //
+    //
     }
 
     /**
@@ -41,7 +42,7 @@ class ChatroomPolicy
      */
     public function create(User $user)
     {
-        //
+    //
     }
 
     /**
@@ -53,7 +54,10 @@ class ChatroomPolicy
      */
     public function update(User $user, Chatroom $chatroom)
     {
-        //
+        if ($chatroom->users->contains($user)) {
+            return Response::allow();
+        }
+        return Response::deny('You are not allowed to edit this chatroom.');
     }
 
     /**
@@ -65,7 +69,7 @@ class ChatroomPolicy
      */
     public function delete(User $user, Chatroom $chatroom)
     {
-        //
+    //
     }
 
     /**
@@ -77,7 +81,7 @@ class ChatroomPolicy
      */
     public function restore(User $user, Chatroom $chatroom)
     {
-        //
+    //
     }
 
     /**
@@ -89,6 +93,6 @@ class ChatroomPolicy
      */
     public function forceDelete(User $user, Chatroom $chatroom)
     {
-        //
+    //
     }
 }

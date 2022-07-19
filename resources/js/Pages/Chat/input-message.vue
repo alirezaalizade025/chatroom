@@ -58,7 +58,7 @@
                     <input
                         v-model="message"
                         @keyup.enter="editMode ? editMessage() : sendMessage()"
-                        class="rounded-full py-2 pl-3 pr-10 w-full border border-gray-800 focus:border-gray-700 bg-gray-800 focus:bg-gray-900 focus:outline-none text-gray-200 focus:shadow-md transition duration-300 ease-in"
+                        class="rounded-full py-2 pl-3 pr-24 w-full border border-gray-800 focus:border-gray-700 bg-gray-800 focus:bg-gray-900 focus:outline-none text-gray-200 focus:shadow-md transition duration-300 ease-in break-all"
                         type="text"
                         placeholder="Aa"
                         :class="[
@@ -70,7 +70,7 @@
                     />
                     <button
                         type="button"
-                        class="absolute top-0 right-8 mt-2 mr-3 flex flex-shrink-0 focus:outline-none block text-blue-600 hover:text-blue-700 w-6 h-6"
+                        class="absolute top-0 right-10 mt-2 mr-3 flex flex-shrink-0 focus:outline-none block text-blue-600 hover:text-blue-700 w-6 h-6"
                     >
                         <svg
                             viewBox="0 0 20 20"
@@ -84,9 +84,9 @@
                     <button
                         @click="editMode ? editMessage() : sendMessage()"
                         type="button"
-                        class="absolute top-0 right-1 mt-2 mr-3 flex flex-shrink-0 focus:outline-none block text-blue-600 hover:text-blue-700 w-6 h-6"
+                        class="absolute top-0 right-1 mt-2 mr-3 flex justify-center flex-shrink-0 focus:outline-none block text-blue-600 hover:text-blue-700 w-6 h-6"
                     >
-                        send
+                        <i class="fa-solid fa-paper-plane self-center test-center scale-150"></i>
                     </button>
                 </label>
             </div>

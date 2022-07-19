@@ -3,7 +3,7 @@
         <div v-for="(message, index) in messages" :key="index">
             <div :ref="'message_' + message.id">
                 <div
-                    class="rounded-xl p-4 max-w-[60%]"
+                    class="rounded-xl p-4 max-w-[60%] break-all"
                     :class="[
                         message.is_mine ? 'bg-blue-800 ml-auto' : 'bg-gray-700',
                     ]"
@@ -14,20 +14,20 @@
                             v-if="message.is_mine"
                             class="group flex flex-row-reverse gap-5 pb-2 pl-1"
                         >
-                            <div class="cursor-pointer">option</div>
+                            <div class="cursor-pointer"><i class="fa-solid fa-ellipsis"></i></div>
                             <div
                                 @click="
                                     editMessage(message.id, message.message)
                                 "
-                                class="opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer hover:text-teal-500 hover:scale-150"
+                                class="opacity-0 scale-110 group-hover:opacity-100 transition duration-200 cursor-pointer hover:text-teal-500 hover:scale-150"
                             >
-                                edit
+                                <i class="fa-solid fa-pen-to-square"></i>
                             </div>
                             <div
                                 @click="deleteMessage(message.id, index)"
-                                class="opacity-0 group-hover:opacity-100 transition duration-[600ms] cursor-pointer hover:text-red-500 hover:scale-150"
+                                class="opacity-0 scale-110 group-hover:opacity-100 transition duration-[600ms] cursor-pointer hover:text-red-500 hover:scale-150"
                             >
-                                delete
+                                <i class="fa-solid fa-eraser"></i>
                             </div>
                         </div>
                     </div>

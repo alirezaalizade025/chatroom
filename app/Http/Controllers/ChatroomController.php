@@ -5,19 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreChatroomRequest;
 use App\Http\Requests\UpdateChatroomRequest;
 use App\Models\Chatroom;
+use App\Http\Resources\ChatroomResource;
 
 class ChatroomController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        return response(
-            Chatroom::get()
-        );
+        $chatroom = ChatroomResource::collection(Chatroom::with('users')->get());
+        return response()->json($chatroom);
     }
 
     /**
@@ -68,11 +68,13 @@ class ChatroomController extends Controller
      *
      * @param  \App\Http\Requests\UpdateChatroomRequest  $request
      * @param  \App\Models\Chatroom  $chatroom
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(UpdateChatroomRequest $request, Chatroom $chatroom)
     {
-    //
+        $this->authorize('update', $chatroom);
+        $chatroom->update($request->all());
+        return response()->json(['msg' => 'Chatroom updated successfully', 'data' => $chatroom]);
     }
 
     /**

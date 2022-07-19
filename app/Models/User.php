@@ -64,4 +64,8 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Chatroom::class, ChatroomUser::class, 'user_id', 'id', 'id', 'chatroom_id');
     }
+    public function chatroomUser()
+    {
+        return $this->hasMany(ChatroomUser::class);
+    }
 }

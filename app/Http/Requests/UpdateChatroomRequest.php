@@ -13,6 +13,9 @@ class UpdateChatroomRequest extends FormRequest
      */
     public function authorize()
     {
+        if (auth()->user()) {
+            return true;
+        }
         return false;
     }
 
@@ -24,7 +27,7 @@ class UpdateChatroomRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required|string|max:50',
         ];
     }
 }
