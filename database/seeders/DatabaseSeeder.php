@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use App\Models\Message;
 use App\Models\Chatroom;
 use App\Models\ChatroomUser;
@@ -17,15 +18,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory(10)->create();
+        User::factory(10)->create();
 
-        \App\Models\User::factory()->create([
+        User::factory()->create([
             'email' => 'admin@admin.com',
             'password' => bcrypt('admin'),
         ]);
 
-        Chatroom::factory(3)->create();
+        Chatroom::factory(5)->create();
         Message::factory(100)->create();
-        ChatroomUser::factory(100)->create();
+        ChatroomUser::factory(20)->create();
     }
 }

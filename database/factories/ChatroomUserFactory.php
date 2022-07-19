@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use App\Models\Chatroom;
+use App\Models\ChatroomUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,17 +19,16 @@ class ChatroomUserFactory extends Factory
      */
     public function definition()
     {
-        $chatroomUser = [
-            'user_id' => User::all()->random()->id,
+        $chatroom = [
+            'chatroom_id' => Chatroom::all()->random()->id,
+            'user_id' => User::all()->unique()->random()->id,
+            'is_blocked' => $this->faker->randomElement([true, false]),
+            'role' => $this->faker->randomElement(['admin', 'user']),
         ];
-        while(true) {
-            $chatroom = Chatroom::all()->random();
-            if ($chatroom->users->contains($chatroomUser['user_id'])) {
-                continue;
-            }
-            $chatroomUser['chatroom_id'] = $chatroom->id;
-            break;
+
+        while (ChatroomUser::where([['chatroom_id', $chatroom['chatroom_id']], ['user_id', $chatroom['user_id']]])->get()->count() > 0) {
+            $chatroom['user_id'] = User::all()->random()->id;
         }
-        return $chatroomUser;
+        return $chatroom;
     }
 }

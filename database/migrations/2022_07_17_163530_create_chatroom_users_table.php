@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(Chatroom::class)->constrained();
             $table->foreignIdFor(User::class)->constrained();
             $table->boolean('is_blocked')->default(false);
-            $table->boolean('is_admin')->default(false);
+            $table->enum('role', ['admin', 'user'])->default('user');
             $table->timestamps();
         });
     }

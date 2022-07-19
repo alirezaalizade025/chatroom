@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chatroom;
+use App\Models\ChatroomUser;
+use Illuminate\Http\Request;
+use App\Http\Resources\ChatroomResource;
 use App\Http\Requests\StoreChatroomRequest;
 use App\Http\Requests\UpdateChatroomRequest;
-use App\Models\Chatroom;
-use App\Http\Resources\ChatroomResource;
 
 class ChatroomController extends Controller
 {
@@ -16,7 +18,7 @@ class ChatroomController extends Controller
      */
     public function index()
     {
-        $chatroom = ChatroomResource::collection(Chatroom::with('users')->get());
+        $chatroom = ChatroomResource::collection(auth()->user()->chatrooms()->with('users')->get());
         return response()->json($chatroom);
     }
 
@@ -86,5 +88,21 @@ class ChatroomController extends Controller
     public function destroy(Chatroom $chatroom)
     {
     //
+    }
+
+    public function addAdmin(Request $request, $chatroomId)
+    {
+        // $this->authorize('update', $chatroom);
+        $user = ChatroomUser::where([['user_id', $request->user_id], ['chatroom_id', $chatroomId]])->get()->first();
+        $user->update(['role' => ($user->role == 'admin' ? 'user' : 'admin')]);
+        return response($user);
+    }
+
+    public function blockUser(Request $request, $chatroomId)
+    {
+        // $this->authorize('update', $chatroom);
+        $new = ChatroomUser::where([['user_id', $request->user_id], ['chatroom_id', $chatroomId]])->get()->first();
+        $new->update(['is_blocked' => !$new->is_blocked]);
+        return response($new);
     }
 }

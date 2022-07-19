@@ -7,13 +7,15 @@
             @click="handleClickModal"
         >
             <div
-                tabindex="0"
                 class="bg-gradient-to-br from-[#1726ad] to-[#c3376354] md:w-2/3 p-10 text-white md:h-4/5 w-full h-full m-auto rounded-xl"
             >
                 <div class="flex justify-between">
                     <div class="flex gap-3">
-                        <div v-if="!editTitle" class="text-3xl font-black" v-text="room.name">
-                        </div>
+                        <div
+                            v-if="!editTitle"
+                            class="text-3xl font-black"
+                            v-text="room.name"
+                        ></div>
                         <input
                             v-if="editTitle"
                             id="editTitle"
@@ -33,16 +35,71 @@
                     </div>
                 </div>
                 <div class="border-t mt-5 p-5 overflow-auto h-[90%]">
-                    <div class="">members</div>
+                    <div class="flex justify-around">
+                        <div
+                            @click="showUsers('users')"
+                            class="p-2 rounded-xl bg-green-700 hover:bg-green-500 cursor-pointer"
+                        >
+                            members
+                        </div>
+                        <div
+                            @click="showUsers('blocked')"
+                            class="p-2 rounded-xl bg-red-700 hover:bg-red-500 cursor-pointer"
+                        >
+                            blocked
+                        </div>
+                    </div>
                     <div class="overflow-auto">
                         <div
-                            v-for="(user, index) in room.users"
+                            v-for="(user, index) in usersList"
                             :key="index"
-                            class="even:backdrop-blur-sm p-3 flex gap-5 items-center rounded-xl mx-2"
+                            class="even:bg-gradient-to-br from-[#1726ad] to-[#c3376354] relative p-3 flex gap-5 items-center rounded-xl mx-2"
                         >
-                            <div class="bg-white rounded-full w-12 h-12"></div>
-                            <div class="font-bold">{{ user.name }}</div>
-                            <div class="ml-auto">
+                            <i
+                                v-if="is_admin && currentUser.id != user.id"
+                                class="fa-solid fa-list-ul right-2 cursor-pointer group"
+                            >
+                                <div
+                                    class="hidden group-hover:block absolute top-0 bg-gray-500 p-5 rounded-xl z-[99] space-y-5 text-sm"
+                                >
+                                    <div
+                                        @click="addAdmin(user.id)"
+                                        class="hover:text-teal-400"
+                                    >
+                                        {{
+                                            user.role == "admin"
+                                                ? "remove from admins"
+                                                : "add to admins"
+                                        }}
+                                    </div>
+                                    <div
+                                        @click="blockUser(user.id)"
+                                        class="hover:text-red-400"
+                                    >
+                                        block user
+                                    </div>
+                                </div>
+                            </i>
+                            <div class="bg-white rounded-full w-12 h-12 z-0"></div>
+                            <div class="font-bold">
+                                {{ user.name }}
+                            </div>
+                            <div
+                                :class="[
+                                    user.is_blocked
+                                        ? 'ml-auto bg-red-500 p-2 rounded-xl'
+                                        : null,
+                                ]"
+                            >
+                                {{ user.is_blocked ? "blocked" : null }}
+                            </div>
+                            <div
+                                :class="[
+                                    user.role == 'admin'
+                                        ? 'ml-auto bg-teal-800 p-2 rounded-xl'
+                                        : null,
+                                ]"
+                            >
                                 {{ user.role == "admin" ? "admin" : null }}
                             </div>
                         </div>
@@ -72,19 +129,22 @@ export default {
     data: function () {
         return {
             showModal: false,
-            user: {},
+            currentUser: {},
             is_admin: false,
             editTitle: false,
+            userList: "member",
+            usersList: {},
         };
     },
     watch: {
         chatroomInfoShow(val) {
             this.showModal = true;
-            this.user = JSON.parse(this.loggedUser);
+            this.currentUser = JSON.parse(this.loggedUser);
             this.is_admin =
                 this.room.users.filter(
-                    (person) => person.id === this.user.id
+                    (person) => person.id === this.currentUser.id
                 )[0].role == "admin";
+            this.usersList = this.room.users;
         },
     },
     methods: {
@@ -119,6 +179,50 @@ export default {
                         });
                 this.editTitle = false;
             }
+        },
+        showUsers(type) {
+            if (type == "blocked") {
+                this.usersList = this.room.users.filter(
+                    (user) => user.is_blocked == true
+                );
+            } else if (type == "users") {
+                this.usersList = this.room.users;
+            }
+        },
+        addAdmin(id) {
+            axios
+                .put(`chatrooms/${this.room.id}/add_admin`, {
+                    user_id: id,
+                })
+                .then((res) => {
+                    if (res.status == 200) {
+                        this.room.users.filter(
+                            (user) => user.id == id
+                        )[0].role = res.data.role;
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+        blockUser(id) {
+            axios
+                .put(`chatrooms/${this.room.id}/block_user`, {
+                    user_id: id,
+                })
+                .then((res) => {
+                    if (res.status == 200) {
+                        this.room.users.filter(
+                            (user) => user.id == id
+                        )[0].is_blocked = !this.room.users.filter(
+                            (user) => user.id == id
+                        )[0].is_blocked;
+                    }
+                    console.log(res.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         },
     },
 };

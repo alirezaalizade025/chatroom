@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Message;
+use App\Models\ChatroomUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -21,6 +22,10 @@ class Chatroom extends Model
     public function users()
     {
         return $this->hasManyThrough(User::class, ChatroomUser::class, 'chatroom_id', 'id', 'id', 'user_id');
+    }
+    public function chatroomUsers()
+    {
+        return $this->hasMany(ChatroomUser::class);
     }
 
     protected function getLastMessageAttribute()

@@ -17,12 +17,14 @@ class ChatroomResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'users' => $this->users->map(function ($user) {
+            'users' => $this->users
+            ->map(function ($user) {
             return [
                     'id' => $user->id,
                     'name' => $user->name,
-                    'role' =>$user->chatroomUser->where('chatroom_id', $this->id)->first()->is_admin ? 'admin' : 'user',
+                    'role' => $user->chatroomUser->where('chatroom_id', $this->id)->first()->role,
                     'profile_photo_url' => $user->profile_photo_url,
+                    'is_blocked' => $user->chatroomUser->where('chatroom_id', $this->id)->first()->is_blocked,
                 ];
         }),
             'last_message' => $this->last_message,

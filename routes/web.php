@@ -34,4 +34,6 @@ Route::middleware([
 
 
 Route::middleware(['auth:sanctum', 'verified'])->resource('/chatrooms', ChatroomController::class);
+Route::middleware(['auth:sanctum', 'verified'])->put('/chatrooms/{chatroom_id}/add_admin', [ChatroomController::class, 'addAdmin']);
+Route::middleware(['auth:sanctum', 'verified'])->put('/chatrooms/{chatroom_id}/block_user', [ChatroomController::class, 'blockUser']);
 Route::middleware(['auth:sanctum', 'verified'])->resource('/chatrooms/{chatroom_id}/messages', MessageController::class);
