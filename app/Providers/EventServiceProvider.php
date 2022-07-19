@@ -24,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\DeleteMessage' => [
             'App\Listeners\deleteMessageNotification',
         ],
+        'App\Events\EditMessage' => [
+            'App\Listeners\editMessageNotification',
+        ],
     ];
 
     /**

@@ -10,11 +10,15 @@
                 >
                     <div class="font-bold text-sm mb-1 flex justify-between">
                         <div>{{ message.user.name }}</div>
-                        <div v-if="message.is_mine"
+                        <div
+                            v-if="message.is_mine"
                             class="group flex flex-row-reverse gap-5 pb-2 pl-1"
                         >
                             <div class="cursor-pointer">option</div>
                             <div
+                                @click="
+                                    editMessage(message.id, message.message)
+                                "
                                 class="opacity-0 group-hover:opacity-100 transition duration-200 cursor-pointer hover:text-teal-500 hover:scale-150"
                             >
                                 edit
@@ -28,8 +32,9 @@
                         </div>
                     </div>
                     {{ message.message }}
-                    <div class="text-right text-[0.8rem] mt-2">
-                        {{ message.created_at }}
+                    <div class="flex justify-between text-[0.8rem] mt-2">
+                        <div v-if="message.is_edit">edited</div>
+                        <div class="ml-auto">{{ message.created_at }}</div>
                     </div>
                 </div>
             </div>
@@ -47,6 +52,10 @@ export default {
             type: Object,
             required: true,
         },
+        updatedMessage: {
+            type: Object,
+            default: () => {},
+        },
     },
     watch: {
         messages: function (messages, oldRoom) {
@@ -57,6 +66,13 @@ export default {
                     new Date(message.created_at).getMinutes();
             });
         },
+        updatedMessage: function (message) {
+            this.messages.filter((msg) => msg.id === message.id)[0].message =
+                message.message;
+            this.messages.filter(
+                (msg) => msg.id === message.id
+            )[0].is_edit = true;
+        },
     },
     methods: {
         deleteMessage(id, index) {
@@ -64,12 +80,15 @@ export default {
                 .delete(`chatrooms/${this.chatroom.id}/messages/${id}`)
                 .then((res) => {
                     if (res.status == 200) {
-                        this.messages.splice(index, 1)
+                        this.messages.splice(index, 1);
                     }
                 })
                 .catch((err) => {
                     console.log(err);
                 });
+        },
+        editMessage(id, message) {
+            this.$emit("editMessage", id, message);
         },
     },
 };

@@ -1,6 +1,6 @@
 <template>
     <div ref="msgContainer" class="h-full p-5 overflow-auto">
-        <MessageItem :messages="messages" :chatroom="currentRoom"/>
+        <MessageItem :messages="messages" :chatroom="currentRoom" @editMessage="editMessage" :updatedMessage="editedMessage"/>
     </div>
 </template>
 <script>
@@ -15,6 +15,9 @@ export default {
         newMessage: {
             type: Object,
         },
+        updatedMessage: {
+            type: Object,
+        },
     },
 
     components: {
@@ -24,6 +27,7 @@ export default {
     data() {
         return {
             messages: [],
+            editedMessage: []
         };
     },
 
@@ -42,6 +46,13 @@ export default {
 
                 window.Echo.private("chatroom." + this.currentRoom.id).listen(
                     "DeleteMessage",
+                    (e) => {
+                        vm.getRoomMessages(this.currentRoom.id);
+                    }
+                );
+
+                window.Echo.private("chatroom." + this.currentRoom.id).listen(
+                    "EditMessage",
                     (e) => {
                         vm.getRoomMessages(this.currentRoom.id);
                     }
@@ -66,6 +77,10 @@ export default {
                 new Date(message.created_at).getMinutes();
             this.messages.push(message);
         },
+
+        editMessage(id,message) {
+            this.$emit("editMessage", id, message);
+        },
     },
 
     watch: {
@@ -74,6 +89,9 @@ export default {
         },
         newMessage: function (newMessage, oldMessage) {
             this.appendMessage(newMessage);
+        },
+        updatedMessage: function (newMessage, oldMessage) {
+            this.editedMessage = newMessage;
         },
     },
 

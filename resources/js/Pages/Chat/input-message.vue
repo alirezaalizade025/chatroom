@@ -42,13 +42,31 @@
                 </svg>
             </button>
             <div class="relative flex-grow">
+                <div
+                    v-if="editMode"
+                    class="absolute -top-11 h-10 rounded-full py-2 pl-3 pr-10 w-full border border-gray-800 focus:border-gray-700 focus:bg-gray-900 focus:outline-none text-gray-200 focus:shadow-md transition duration-300 ease-in bg-indigo-700 flex"
+                >
+                    {{ beforeEdit }}
+                    <div
+                        class="ml-auto -mr-6 scale-150 font-bold cursor-pointer"
+                        @click="disableEdit()"
+                    >
+                        &times;
+                    </div>
+                </div>
                 <label>
                     <input
                         v-model="message"
-                        @keyup.enter="sendMessage()"
+                        @keyup.enter="editMode ? editMessage() : sendMessage()"
                         class="rounded-full py-2 pl-3 pr-10 w-full border border-gray-800 focus:border-gray-700 bg-gray-800 focus:bg-gray-900 focus:outline-none text-gray-200 focus:shadow-md transition duration-300 ease-in"
                         type="text"
                         placeholder="Aa"
+                        :class="[
+                            invalidInput
+                                ? 'from-red-400 to-rose-200'
+                                : 'from-blue-800',
+                            'bg-gradient-to-r',
+                        ]"
                     />
                     <button
                         type="button"
@@ -64,7 +82,7 @@
                         </svg>
                     </button>
                     <button
-                        @click="sendMessage()"
+                        @click="editMode ? editMessage() : sendMessage()"
                         type="button"
                         class="absolute top-0 right-1 mt-2 mr-3 flex flex-shrink-0 focus:outline-none block text-blue-600 hover:text-blue-700 w-6 h-6"
                     >
@@ -92,10 +110,16 @@ export default {
             type: Object,
             required: true,
         },
+        editInput: {
+            type: Object,
+        },
     },
     data: function () {
         return {
             message: "",
+            invalidInput: false,
+            editMode: false,
+            beforeEdit: "",
         };
     },
     methods: {
@@ -117,6 +141,58 @@ export default {
                 .catch((response) => {
                     console.log(response);
                 });
+        },
+        editMessage() {
+            if (this.message == "" || this.message == this.beforeEdit) {
+                return;
+            }
+
+            axios
+                .put(`/chatrooms/${this.currentRoom.id}/messages/${this.editInput.id}`, {
+                    id: this.editInput.id,
+                    message: this.message,
+                })
+                .then((response) => {
+                    if ((response.status = 200)) {
+                        this.message = "";
+                        this.disableEdit()
+                        this.$emit("messageEdit", response.data);
+                    }
+                })
+                .catch((response) => {
+                    console.log(response);
+                });
+        },
+        disableEdit() {
+            this.editMode = false;
+            this.message = "";
+            this.$emit("disableEdit");
+        },
+    },
+    watch: {
+        editInput: {
+            handler: function (newValue, oldValue) {
+                if (this.message.length == 0) {
+                    if (
+                        (newValue && newValue.message != false) ||
+                        this.editMode
+                    ) {
+                        this.message = newValue.message;
+                        this.beforeEdit = oldValue.message;
+                        this.editMode = true;
+                    }
+                } else {
+                    this.invalidInput = true;
+                    this.editMode = false;
+                }
+            },
+            deep: true,
+        },
+        message: {
+            handler: function (newValue) {
+                this.invalidInput = false;
+            },
+            deep: true,
         },
     },
 };

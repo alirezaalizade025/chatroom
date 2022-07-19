@@ -13,6 +13,9 @@ class UpdateMessageRequest extends FormRequest
      */
     public function authorize()
     {
+        if (auth()->check()) {
+            return true;
+        }
         return false;
     }
 
@@ -24,7 +27,8 @@ class UpdateMessageRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'id' => 'required|exists:messages',
+            'message' => 'required|string|max:255',
         ];
     }
 }

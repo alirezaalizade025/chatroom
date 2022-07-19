@@ -61,7 +61,10 @@ class MessagePolicy
      */
     public function update(User $user, Message $message)
     {
-    //
+        if($user->id == $message->user_id) {
+            return Response::allow();
+        }
+        return Response::deny('You are not allowed to update this message.');
     }
 
     /**

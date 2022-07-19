@@ -76,9 +76,20 @@
                         </div>
                     </div>
 
-                    <messageContainer :currentRoom="currentRoom" :newMessage="newMessage"/>
+                    <messageContainer
+                        :currentRoom="currentRoom"
+                        :newMessage="newMessage"
+                        @editMessage="handleEditMessage"
+                        :updatedMessage="editMessage"
+                    />
 
-                    <InputMessage :currentRoom="currentRoom" @messageSent="messageSent"/>
+                    <InputMessage
+                        :currentRoom="currentRoom"
+                        @messageSent="messageSent"
+                        @messageEdit="messageEdit"
+                        @disableEdit="disableEdit"
+                        :editInput="editInput"
+                    />
                 </section>
             </main>
         </div>
@@ -95,6 +106,11 @@ export default {
         return {
             currentRoom: [],
             newMessage: [],
+            editMessage: [],
+            editInput: {
+                id: "",
+                message: "",
+            },
         };
     },
     components: {
@@ -109,6 +125,17 @@ export default {
         },
         messageSent(message) {
             this.newMessage = message;
+        },
+        messageEdit(message) {
+            this.editMessage = message;
+        },
+        handleEditMessage(id, message) {
+            this.editInput.id = id;
+            this.editInput.message = message;
+        },
+        disableEdit() {
+            this.editInput.id = false;
+            this.editInput.message = false;
         },
     },
 };

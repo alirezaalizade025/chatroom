@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use App\Models\Chatroom;
 use App\Events\NewMessage;
+use App\Events\EditMessage;
 use App\Events\DeleteMessage;
 use Illuminate\Support\Facades\Request;
 use App\Http\Requests\StoreMessageRequest;
@@ -21,7 +22,7 @@ class MessageController extends Controller
     public function index($chatroom_id)
     {
         $chatroom = Chatroom::orderBy('created_at', 'DESC')->find($chatroom_id);
-        $this->authorize('viewAny', [Message::class, $chatroom]);
+        $this->authorize('viewAny', [Message::class , $chatroom]);
         return response($chatroom->messages()->with('user')->get());
     }
 
@@ -45,13 +46,13 @@ class MessageController extends Controller
     {
 
         $chatroom = Chatroom::find($request->chatroom_id);
-        $this->authorize('create', [Message::class, $chatroom]);
+        $this->authorize('create', [Message::class , $chatroom]);
         $request->merge(['user_id' => auth()->id()]);
         $newMessage = $chatroom->messages()->create($request->all());
 
-        broadcast(new NewMessage($newMessage))->toOthers();
+        broadcast(new NewMessage($chatroom->messages()->with('user')->latest()->first()))->toOthers();
 
-        return response($newMessage);
+        return response($chatroom->messages()->with('user')->latest()->first());
     }
 
     /**
@@ -83,9 +84,14 @@ class MessageController extends Controller
      * @param  \App\Models\Message  $message
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateMessageRequest $request, Message $message)
+    public function update(UpdateMessageRequest $request, int $chatroomId, Message $message)
     {
-    //
+        $this->authorize('update', $message);
+        $message->update([
+            'message' => $request->message,
+        ]);
+        broadcast(new EditMessage($message))->toOthers();
+        return response($message);
     }
 
     /**
