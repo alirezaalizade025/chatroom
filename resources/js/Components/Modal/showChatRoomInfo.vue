@@ -30,12 +30,12 @@
                         ></i>
                     </div>
                     <div class="self-center">
-                        {{ room.users.length }}
-                        <i class="fa-solid fa-users"></i>
+                        <span v-text="usersList.length"></span>
+                        <i class="fa-solid fa-users ml-1"></i>
                     </div>
                 </div>
                 <div class="border-t mt-5 p-5 overflow-auto h-[90%]">
-                    <div class="flex justify-around">
+                    <div class="flex justify-around items-center">
                         <div
                             @click="showUsers('users')"
                             class="p-2 rounded-xl bg-green-700 hover:bg-green-500 cursor-pointer"
@@ -43,10 +43,22 @@
                             members
                         </div>
                         <div
+                            v-if="is_admin"
                             @click="showUsers('blocked')"
                             class="p-2 rounded-xl bg-red-700 hover:bg-red-500 cursor-pointer"
                         >
                             blocked
+                        </div>
+                        <div
+                            @click="addToRoom()"
+                            class="p-2 rounded-xl bg-blue-700 hover:bg-blue-500 cursor-pointer"
+                        >
+                            <input
+                                type="text"
+                                class="rounded-full px-2 mx-2 bg-blue-800"
+                                id="newMemberId"
+                            />
+                            <i class="fa-solid fa-user-plus"></i>
                         </div>
                     </div>
                     <div class="overflow-auto">
@@ -76,11 +88,17 @@
                                         @click="blockUser(user.id)"
                                         class="hover:text-red-400"
                                     >
-                                        block user
+                                        {{
+                                            user.is_blocked
+                                                ? "unblock user"
+                                                : "block user"
+                                        }}
                                     </div>
                                 </div>
                             </i>
-                            <div class="bg-white rounded-full w-12 h-12 z-0"></div>
+                            <div
+                                class="bg-white rounded-full w-12 h-12 z-0"
+                            ></div>
                             <div class="font-bold">
                                 {{ user.name }}
                             </div>
@@ -218,11 +236,30 @@ export default {
                             (user) => user.id == id
                         )[0].is_blocked;
                     }
-                    console.log(res.data);
                 })
                 .catch((err) => {
                     console.log(err);
                 });
+        },
+        addToRoom() {
+            if (this.$refs.modal.querySelector("#newMemberId").value != "")
+                axios
+                    .put(`chatrooms/${this.room.id}/add_user`, {
+                        username:
+                            this.$refs.modal.querySelector("#newMemberId")
+                                .value,
+                    })
+                    .then((res) => {
+                        if (res.status == 200) {
+                            this.usersList = res.data.data.users;
+                            this.$refs.modal.querySelector(
+                                "#newMemberId"
+                            ).value = "";
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
         },
     },
 };

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Chatroom;
 use App\Models\ChatroomUser;
 use Illuminate\Http\Request;
@@ -104,5 +105,20 @@ class ChatroomController extends Controller
         $new = ChatroomUser::where([['user_id', $request->user_id], ['chatroom_id', $chatroomId]])->get()->first();
         $new->update(['is_blocked' => !$new->is_blocked]);
         return response($new);
+    }
+
+    public function addUser(Request $request, $chatroomId)
+    {
+        // $this->authorize('update', $chatroom);
+        $user = User::where('username', $request->username)->get()->first();
+        if (!$user) {
+            return response()->json(['msg' => 'User not found']);
+        }
+        elseif (ChatroomUser::where([['user_id', $user->id], ['chatroom_id', $chatroomId]])->get()->first()) {
+            return response()->json(['msg' => 'User already in chatroom']);
+        }
+        ChatroomUser::create(['user_id' => $user->id, 'chatroom_id' => $chatroomId, 'role' => 'user']);
+        $chatroom = ChatroomResource::collection([Chatroom::with('users')->find($chatroomId)]);
+        return response()->json(['msg' => 'User added successfully', 'data' => $chatroom->first()]);
     }
 }
